@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" href="/otp.css">
+</head>
+
+<body>
+    <div class="otp-container">
+        <h2>OTP Verification</h2>
+        <form action="/verify-otp" method="POST">
+            <div class="form-group">
+                <label for="otp">Enter OTP</label>
+                <input type="text" id="otp" name="otp" maxlength="6" placeholder="Enter 6-digit OTP">
+            </div>
+            <button type="submit" class="verify-btn">Verify OTP</button>
+        </form>
+        <div class="resend-link">
+            <p>Didn't receive OTP? <a href="#" onclick="resendOTP()">Resend OTP</a></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 jsp-gram. All rights reserved.</p>
+        <p>Contact us: jspgram@gmail.com</p>
+    </footer>
+
+    <script>
+        function resendOTP() {
+            // Add your resend OTP logic here
+            alert('OTP resend functionality will be implemented here');
+        }
+    </script>
+</body>
+
+</html>
+</div>
