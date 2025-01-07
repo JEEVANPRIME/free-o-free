@@ -44,5 +44,8 @@ public class User {
 	private int otp;
 	private boolean verified;
 	private boolean inorout;
+	private String bio;
+	private String imageurl;
+	
 
 }

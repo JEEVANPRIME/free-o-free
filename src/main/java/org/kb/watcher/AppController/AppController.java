@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -65,12 +66,22 @@ public class AppController {
 
 	@GetMapping("/profile/{username}")
 	public String profilePage(@PathVariable String username, HttpSession session) {
-		return service.profilePage(username, session);
+		return service.profilePage(username, session); 
+	}
+
+	@GetMapping("/edit-profile/{username}")
+	public String editProfile(@PathVariable String username, HttpSession session) {
+		return service.editProfile(username, session); 
+	}
+
+	@PostMapping("/update-profile")
+	public String editProfile(HttpSession session, @RequestParam MultipartFile image, @RequestParam String bio) {
+		return service.updateProfile(session, image, bio);
 	}
 
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
-		return service.logout(session); 
+		return service.logout(session);
 	}
 
 }

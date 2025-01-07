@@ -67,6 +67,13 @@ header {
 	border: 2px solid #ddd;
 }
 
+.profile-picture {
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
 .profile-info {
 	flex: 1;
 }

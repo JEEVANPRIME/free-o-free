@@ -22,13 +22,13 @@
 
     <div class="profile-container">
         <div class="profile-header">
-            <img src="default-profile.jpg" alt="Profile Picture" class="profile-image">
+            <img th:if="${session.user.imageurl==null}" src="https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png" alt="Profile Picture" class="profile-picture">
+            <img th:if="${session.user.imageurl}"  th:src="${session.user.imageurl}" alt="Profile Picture" class="profile-picture">
             <div class="profile-info">
                 <h2 th:text="${session.user.username}"></h2>
                 <p th:text="${session.user.email}"></p>
-                <textarea placeholder="Bio: A passionate developer who loves to create innovative solutions."
-                    class="input-field"></textarea>
-                <button class="edit-button">Edit Profile</button>
+                <textarea th:text="${session.user.bio}" class="input-field"></textarea>
+                <a th:href="'/edit-profile/'+${session.user.username}"><button class="edit-button">Edit Profile</button></a>
             </div>
         </div>
 

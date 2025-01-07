@@ -7,9 +7,11 @@ import java.util.Random;
 import org.kb.watcher.Repository.UserRepository;
 import org.kb.watcher.dto.User;
 import org.kb.watcher.helper.AES;
+import org.kb.watcher.helper.CloudinaryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
@@ -23,6 +25,9 @@ public class AppService {
 
 	@Autowired
 	UserRepository repository;
+
+	@Autowired
+	CloudinaryHelper helper;
 
 	public String validateUser(User user, BindingResult result, HttpSession session) {
 		if (!user.getPassword().equals(user.getConfirmpassword())) {
@@ -145,8 +150,8 @@ public class AppService {
 	}
 
 	public String logout(HttpSession session) {
-		User user=(User) session.getAttribute("user");
-		user.setInorout(false); 
+		User user = (User) session.getAttribute("user");
+		user.setInorout(false);
 		repository.save(user);
 		session.removeAttribute("user");
 		session.setAttribute("pass", "logout Sucessfull");
@@ -163,6 +168,28 @@ public class AppService {
 			return "redirect:/login";
 		}
 
+	}
+
+	public String editProfile(String username, HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			return "edit-profile.html";
+		} else {
+			session.setAttribute("fail", "Session Timedout");
+			return "redirect:/login";
+		}
+	}
+
+	public String updateProfile(HttpSession session, MultipartFile image, String bio) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			user.setBio(bio);
+			user.setImageurl(helper.saveImage(image));
+			repository.save(user);
+			return "redirect:/profile/"+user.getUsername(); 
+		} else {
+			return "redirect:/login";
+		}
 	}
 
 }
