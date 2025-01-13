@@ -1,21 +1,22 @@
 package org.kb.watcher.service;
 
-import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import org.kb.watcher.Repository.PostRepository;
 import org.kb.watcher.Repository.UserRepository;
+import org.kb.watcher.dto.Post;
 import org.kb.watcher.dto.User;
 import org.kb.watcher.helper.AES;
 import org.kb.watcher.helper.CloudinaryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 
 @Service
 public class AppService {
@@ -25,6 +26,9 @@ public class AppService {
 
 	@Autowired
 	UserRepository repository;
+
+	@Autowired
+	PostRepository postRepository;
 
 	@Autowired
 	CloudinaryHelper helper;
@@ -158,9 +162,13 @@ public class AppService {
 		return "redirect:/login";
 	}
 
-	public String profilePage(String username, HttpSession session) {
+	public String profilePage(String username, HttpSession session, ModelMap map) {
 		User user = (User) session.getAttribute("user");
 		if (user != null && user.isInorout()) {
+			List<Post> posts = postRepository.findByUser(user);
+			if (!posts.isEmpty())
+				map.put("posts", posts);
+
 			System.err.println(username);
 			return "profile.html";
 		} else {
@@ -186,10 +194,79 @@ public class AppService {
 			user.setBio(bio);
 			user.setImageurl(helper.saveImage(image));
 			repository.save(user);
-			return "redirect:/profile/"+user.getUsername(); 
+			return "redirect:/profile/" + user.getUsername();
 		} else {
 			return "redirect:/login";
 		}
+	}
+
+	public String addPost(String username, HttpSession session, ModelMap map) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			List<Post> posts = postRepository.findByUser(user);
+			if (!posts.isEmpty())
+				map.put("posts", posts);
+
+			return "add-post.html";
+		} else {
+			session.setAttribute("fail", "Session Timeout");
+			return "redirect:/login";
+		}
+	}
+
+	public String uploadPost(Post post, MultipartFile file, HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			post.setFileurl(helper.saveUploadImage(file)); 
+			post.setCaption(post.getCaption());
+			post.setUser(user); 
+			postRepository.save(post);
+			session.setAttribute("pass", "Posted Sucessfully");
+			return "redirect:/profile/" + user.getUsername();
+		} else {
+			session.setAttribute("fail", "Invalid session");
+			return "redirect:/login";
+		}
+	}
+
+	public String deletePost(HttpSession session, int id) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			postRepository.deleteById(id);
+			session.setAttribute("pass", "Post deleted sucessfully");
+			return "redirect:/profile/" + user.getUsername();
+		} else {
+			session.setAttribute("fail", "Invalid session");
+			return "redirect:/login";
+		}
+	}
+
+	public String editPost(int id, HttpSession session, ModelMap map) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			List<Post> posts = postRepository.findByUser(user);
+			if (!posts.isEmpty())
+				map.put("posts", posts);
+
+			return "edit-post.html";
+		} else {
+			session.setAttribute("fail", "Session Timeout");
+			return "redirect:/login";
+		}
+	}
+
+	public String editPost(Post post, MultipartFile file, HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			deletePost(session, post.getId());
+			uploadPost(post, file, session);
+			session.setAttribute("pass", "Post edited");
+			return "redirect:/profile/" + user.getUsername();
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login"; 
+		}
+
 	}
 
 }

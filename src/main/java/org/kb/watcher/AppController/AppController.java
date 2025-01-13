@@ -1,11 +1,13 @@
 package org.kb.watcher.AppController;
 
+import org.kb.watcher.dto.Post;
 import org.kb.watcher.dto.User;
 import org.kb.watcher.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,18 +67,43 @@ public class AppController {
 	}
 
 	@GetMapping("/profile/{username}")
-	public String profilePage(@PathVariable String username, HttpSession session) {
-		return service.profilePage(username, session); 
+	public String profilePage(@PathVariable String username, HttpSession session, ModelMap map) {
+		return service.profilePage(username, session, map);
 	}
 
 	@GetMapping("/edit-profile/{username}")
 	public String editProfile(@PathVariable String username, HttpSession session) {
-		return service.editProfile(username, session); 
+		return service.editProfile(username, session);
 	}
 
 	@PostMapping("/update-profile")
 	public String editProfile(HttpSession session, @RequestParam MultipartFile image, @RequestParam String bio) {
 		return service.updateProfile(session, image, bio);
+	}
+
+	@GetMapping("/add-post/{username}")
+	public String addPost(@PathVariable String username, HttpSession session, ModelMap map) {
+		return service.addPost(username, session, map);
+	}
+
+	@PostMapping("/upload")
+	public String uploadPost(Post post, @RequestParam MultipartFile file, HttpSession session) {
+		return service.uploadPost(post, file, session);
+	} 
+	
+	@GetMapping("/edit-post/{id}")
+	public String editPost(@PathVariable int id, HttpSession session, ModelMap map) {
+		return service.editPost(id, session, map);
+	}
+
+	@GetMapping("/delete-post/{id}")
+	public String deletePost(HttpSession session, @PathVariable int id) {
+		return service.deletePost(session, id); 
+	} 
+	
+	@PostMapping("/edit-post")
+	public String editPost(Post post,@RequestParam MultipartFile file,HttpSession session) {
+		return service.editPost(post, file, session); 
 	}
 
 	@GetMapping("/logout")

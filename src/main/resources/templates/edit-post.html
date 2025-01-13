@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Post</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .upload-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            padding-right: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .custom-file-input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .custom-file-input:hover {
+            border-color: #007bff;
+        }
+
+        .custom-file-input::-webkit-file-upload-button {
+            background: #007bff;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-input {
+            margin: 10px 0;
+        }
+
+        .upload-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .upload-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .post-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .post-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .edit-post-btn,
+        .delete-post-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .edit-post-btn {
+            background-color: #1877f2;
+            color: white;
+        }
+
+        .delete-post-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="upload-form">
+        <div th:if="${posts}">
+            <h1>Current Post</h1>
+            <div class="posts-grid">
+                <div th:each="post:${posts}" class="post-item">
+                    <img th:src="${post.fileurl}">
+                    <p th:text="${post.caption}"></p>
+                </div>
+            </div>
+        </div>
+        <h2>Create New Post</h2>
+        <form action="/edit-post" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Choose Image/Video:</label>
+                <input type="file" id="file" name="file" class="custom-file-input">
+            </div>
+            <div class="form-group">
+                <label for="caption">Caption:</label>
+                <textarea id="caption" name="caption" placeholder="Write a caption..." required></textarea>
+            </div>
+            <button type="submit" class="upload-btn">Upload Post</button>
+        </form>
+    </div>
+</body>
+
+</html>
+</div>
+</form>
