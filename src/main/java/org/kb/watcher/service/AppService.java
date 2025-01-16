@@ -1,5 +1,6 @@
 package org.kb.watcher.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -17,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Service
 public class AppService {
@@ -217,9 +219,9 @@ public class AppService {
 	public String uploadPost(Post post, MultipartFile file, HttpSession session) {
 		User user = (User) session.getAttribute("user");
 		if (user != null && user.isInorout()) {
-			post.setFileurl(helper.saveUploadImage(file)); 
+			post.setFileurl(helper.saveUploadImage(file));
 			post.setCaption(post.getCaption());
-			post.setUser(user); 
+			post.setUser(user);
 			postRepository.save(post);
 			session.setAttribute("pass", "Posted Sucessfully");
 			return "redirect:/profile/" + user.getUsername();
@@ -264,9 +266,126 @@ public class AppService {
 			return "redirect:/profile/" + user.getUsername();
 		} else {
 			session.setAttribute("fail", "Invalid Session");
-			return "redirect:/login"; 
+			return "redirect:/login";
 		}
 
+	}
+
+	public String suggestUser(HttpSession session, ModelMap map) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			List<User> suggestions = repository.findByVerifiedTrue();
+			List<User> usersToRemove = new ArrayList<User>();
+
+			for (User suggestion : suggestions) {
+				if (suggestion.getId() == user.getId()) {
+					usersToRemove.add(suggestion);
+				}
+				for (User followingUser : user.getFollowing()) {
+					if (followingUser.getId() == suggestion.getId()) {
+						usersToRemove.add(suggestion);
+					}
+				}
+			}
+			if (suggestions.isEmpty()) {
+				session.setAttribute("fail", "No suggestion");
+				return "redirect:/profile/" + user.getUsername();
+			} else {
+				suggestions.removeAll(usersToRemove);
+				map.put("suggestions", suggestions);
+				return "suggestions.html";
+			}
+		} else {
+			session.setAttribute("fail", "Session Timedout");
+			return "redirect:/login";
+		}
+	}
+
+	public String followers(int id, HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			User followedUser = repository.findById(id).get();
+			user.getFollowing().add(followedUser);
+			followedUser.getFollowers().add(user);
+			repository.save(user);
+			repository.save(followedUser);
+			session.setAttribute("user", repository.findById(user.getId()).get());
+			return "redirect:/profile/" + user.getUsername();
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+	}
+
+	public String forgotPassword(ModelMap map) {
+		return "forgot-password.html";
+	}
+
+	public String sendEmail(String email, HttpSession session, ModelMap map) {
+
+		User user = repository.findByEmail(email);
+		if (user == null) {
+			session.setAttribute("fail", "Email does not exists");
+			return "redirect:/login";
+		}
+		if (user.getEmail().equals(email)) {
+			System.err.println(email);
+			map.put("showOtpForm", user);
+			int otp = new Random().nextInt(100000, 1000000);
+			user.setOtp(otp);
+			repository.save(user);
+			System.err.println(otp);
+			session.setAttribute("pass", "Email is valid");
+//		try {
+//			clint.send(user.getEmail(), user.getOtp(), user.getFirstname());
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		} catch (MessagingException e) {
+//			e.printStackTrace();
+//		}
+			return "forgot-password.html";
+		} else {
+			session.setAttribute("fail", "Email is not present");
+			return "redirect:/login";
+		}
+	}
+
+	public String confirmPassword(@Valid User user, BindingResult result, ModelMap map, HttpSession session) {
+		User userID = repository.findById(user.getId()).get();
+		if (user.getOtp() == userID.getOtp() && user.getId() == userID.getId()) {
+			if (!user.getPassword().equals(user.getConfirmpassword())) {
+				session.setAttribute("fail", "Password Mismatch");
+				return "forgot-password.html";
+			} else {
+				userID.setPassword(AES.encrypt(user.getPassword()));
+				userID.setOtp(0);
+				repository.save(userID);
+				session.setAttribute("pass", "Password changed sucessfully");
+				return "redirect:/login";
+			}
+		} else {
+			map.put("showOtpForm", userID);
+			map.put("user", userID);
+			session.setAttribute("fail", "OTP mismatch");
+			return "forgot-password.html";
+		}
+	}
+
+	public String followingList(String username, HttpSession session, ModelMap map) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			List<User> followingList = repository.findByFollowing(user);
+			if (followingList.isEmpty()) {
+				session.setAttribute("fail", "Following No one");
+				return "redirect:/profile/" + user.getUsername();
+			} else {
+				map.put("followings", followingList);
+				return "followers.html";
+			}
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
 	}
 
 }

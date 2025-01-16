@@ -16,7 +16,11 @@
             <a href="/logout"><button class="logout-btn">Logout</button></a>
         </div>
     </header>
-
+    <div class="message">
+        <h3 class="success-message" th:text="${session.pass}"></h3>
+        <h3 class="error-message" th:text="${session.fail}"></h3>
+        <th:block th:text="${@msgRemover.remove()}"></th:block>
+    </div>
     <main>
         <div class="checkmark"></div>
         <div class="status-message">You're all caught up!</div>

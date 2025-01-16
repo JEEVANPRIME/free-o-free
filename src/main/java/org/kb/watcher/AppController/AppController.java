@@ -89,8 +89,8 @@ public class AppController {
 	@PostMapping("/upload")
 	public String uploadPost(Post post, @RequestParam MultipartFile file, HttpSession session) {
 		return service.uploadPost(post, file, session);
-	} 
-	
+	}
+
 	@GetMapping("/edit-post/{id}")
 	public String editPost(@PathVariable int id, HttpSession session, ModelMap map) {
 		return service.editPost(id, session, map);
@@ -98,12 +98,42 @@ public class AppController {
 
 	@GetMapping("/delete-post/{id}")
 	public String deletePost(HttpSession session, @PathVariable int id) {
-		return service.deletePost(session, id); 
-	} 
-	
+		return service.deletePost(session, id);
+	}
+
 	@PostMapping("/edit-post")
-	public String editPost(Post post,@RequestParam MultipartFile file,HttpSession session) {
-		return service.editPost(post, file, session); 
+	public String editPost(Post post, @RequestParam MultipartFile file, HttpSession session) {
+		return service.editPost(post, file, session);
+	}
+
+	@GetMapping("/suggestions")
+	public String suggestUsers(HttpSession session, ModelMap map) {
+		return service.suggestUser(session, map);
+	}
+
+	@GetMapping("/follow/{id}")
+	public String followers(@PathVariable int id, HttpSession session) {
+		return service.followers(id, session);
+	}
+
+	@GetMapping("/forgot-password")
+	public String forgotPassword(ModelMap map) {
+		return service.forgotPassword(map);
+	}
+
+	@PostMapping("/sendOtp")
+	public String verifyEmail(@RequestParam String email, HttpSession session, ModelMap map) {
+		return service.sendEmail(email, session, map);
+	}
+
+	@PostMapping("/resetPassword")
+	public String confirmPassword(@Valid User user, BindingResult result, ModelMap map, HttpSession session) {
+		return service.confirmPassword(user, result, map, session);
+	}
+
+	@GetMapping("/following/{username}")
+	public String followingList(@PathVariable String username, HttpSession session, ModelMap map) {
+		return service.followingList(username, session, map);
 	}
 
 	@GetMapping("/logout")

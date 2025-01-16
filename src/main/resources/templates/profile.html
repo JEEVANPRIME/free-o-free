@@ -236,6 +236,22 @@
                 gap: 10px;
             }
         }
+
+        .suggestion-btn {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px
+        }
+
+        .follower-btn{
+            color: black;
+            cursor: pointer;
+            text-decoration: none;
+        }
     </style>
 
 </head>
@@ -251,6 +267,11 @@
         </div>
     </header>
 
+    <div class="message">
+        <h3 class="success-message" th:text="${session.pass}"></h3>
+        <h3 class="error-message" th:text="${session.fail}"></h3>
+        <th:block th:text="${@msgRemover.remove()}"></th:block>
+    </div>
     <div class="profile-container">
         <div class="profile-header">
             <img th:if="${session.user.imageurl==null}"
@@ -269,37 +290,46 @@
 
         <div class="stats">
             <div class="stat-item">
-                <h3>Followers</h3>
-                <p>150</p>
+                <h3>Posts</h3>
+                <span th:if="${posts==null}">0</span>
+                <span th:if="${posts}" th:text="${posts.size()}"></span>
             </div>
             <div class="stat-item">
-                <h3>Following</h3>
-                <p>120</p>
+                <a th:href="'/followers/'+${session.user.username}" class="follower-btn"><h3>Followers</h3></a>
+                <span th:text="${session.user.followers.size()}"></span>
+            </div>
+            <div class="stat-item">
+                <a th:href="'/following/'+${session.user.username}" class="follower-btn"><h3>Following</h3></a>
+                <span th:text="${session.user.following.size()}"></span>
+            </div>
+            <div class="stat-item">
+                <h3>Suggestions</h3>
+                <a href="/suggestions"><button class="suggestion-btn">Suggestions</button></a>
             </div>
         </div>
 
-            <div>
-                <h3>Posts</h3>
-            </div>
-            <div th:if="${posts}">
-                <h1>My Posts</h1>
-                <div class="posts-grid">
-                    <div th:each="post:${posts}" class="post-item">
-                        <img th:src="${post.fileurl}">
-                        <p th:text="${post.caption}"></p>
-                        <p th:text="${post.postTime}"></p>
-                        <div class="post-buttons">
-                            <a th:href="'/edit-post/'+${post.id}"><button class="edit-post-btn">Edit</button></a>
-                            <a th:href="'/delete-post/'+${post.id}"><button class="delete-post-btn">Delete</button></a>
-                        </div>
+        <div>
+            <h3>Posts</h3>
+        </div>
+        <div th:if="${posts}">
+            <h1>My Posts</h1>
+            <div class="posts-grid">
+                <div th:each="post:${posts}" class="post-item">
+                    <img th:src="${post.fileurl}">
+                    <p th:text="${post.caption}"></p>
+                    <p th:text="${post.postTime}"></p>
+                    <div class="post-buttons">
+                        <a th:href="'/edit-post/'+${post.id}"><button class="edit-post-btn">Edit</button></a>
+                        <a th:href="'/delete-post/'+${post.id}"><button class="delete-post-btn">Delete</button></a>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="post-section">
-                <h3>Create New Post</h3>
-                <div class="post-form">
-                    <!-- <div class="file-input">
+        <div class="post-section">
+            <h3>Create New Post</h3>
+            <div class="post-form">
+                <!-- <div class="file-input">
                     <label class="file-label">Upload Image:</label>
                     <input type="file" accept="image/*" class="input-field custom-file-input">
                 </div>
@@ -316,10 +346,10 @@
                     <textarea placeholder="Bio: Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fuga, error."
                         class="input-field"></textarea>
                 </div> -->
-                    <a th:href="'/add-post/'+${session.user.username}"><button class="post-button">Add Post</button></a>
-                </div>
+                <a th:href="'/add-post/'+${session.user.username}"><button class="post-button">Add Post</button></a>
             </div>
         </div>
+    </div>
 </body>
 
 </html>

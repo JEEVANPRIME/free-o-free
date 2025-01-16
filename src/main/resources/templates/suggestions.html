@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Suggestions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .header-buttons button {
+            padding: 8px 16px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .profile-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .suggestion-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .suggestion-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 15px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-picture {
+            height: 100px;
+            width: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: grid;
+            gap: 10px;
+        }
+
+        .username {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .view-btn {
+            background-color: #e0e0e0;
+            height: 50px;
+        }
+
+        .follow-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="/images/logo.png" alt="Watcher Logo">
+        </div>
+        <div class="header-buttons">
+            <a th:href="'/profile/'+${session.user.username}"><button class="profile-btn">Profile</button></a>
+            <a href="/logout"><button class="logout-btn">Logout</button></a>
+        </div>
+    </header>
+    <div class="suggestion-container">
+        <div th:each="suggestion:${suggestions}" class="suggestion-card">
+            <div class="profile-image">
+                <img th:if="${suggestion.imageurl==null}"
+                    src="https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png"
+                    alt="Profile Picture" class="profile-picture">
+                <img th:if="${suggestion.imageurl}" th:src="${suggestion.imageurl}" alt="Profile Picture"
+                    class="profile-picture">
+            </div>
+            <div class="user-info">
+                <span class="username" th:text="${suggestion.username}"></span>
+                <div class="action-buttons">
+                    <button class="button view-btn">View Profile</button>
+                    <a th:href="'/follow/'+${suggestion.id}"><button class="button follow-btn">Follow</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
