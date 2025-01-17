@@ -1,5 +1,6 @@
 package org.kb.watcher.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -246,10 +247,8 @@ public class AppService {
 	public String editPost(int id, HttpSession session, ModelMap map) {
 		User user = (User) session.getAttribute("user");
 		if (user != null && user.isInorout()) {
-			List<Post> posts = postRepository.findByUser(user);
-			if (!posts.isEmpty())
-				map.put("posts", posts);
-
+			Post posts = postRepository.findById(id).get();
+			map.put("post", posts);
 			return "edit-post.html";
 		} else {
 			session.setAttribute("fail", "Session Timeout");
@@ -257,18 +256,21 @@ public class AppService {
 		}
 	}
 
-	public String editPost(Post post, MultipartFile file, HttpSession session) {
+	public String updatePost(Post post, HttpSession session) {
 		User user = (User) session.getAttribute("user");
-		if (user != null && user.isInorout()) {
-			deletePost(session, post.getId());
-			uploadPost(post, file, session);
-			session.setAttribute("pass", "Post edited");
-			return "redirect:/profile/" + user.getUsername();
+		if (user != null) {
+			if (!post.getImage().isEmpty())
+				post.setFileurl(helper.saveImage(post.getImage()));
+			else
+				post.setFileurl(postRepository.findById(post.getId()).get().getFileurl());
+			post.setUser(user);
+			postRepository.save(post);
+			session.setAttribute("pass", "Updated Success");
+			return "redirect:/profile/" + user.getUsername(); 
 		} else {
 			session.setAttribute("fail", "Invalid Session");
 			return "redirect:/login";
 		}
-
 	}
 
 	public String suggestUser(HttpSession session, ModelMap map) {
@@ -371,17 +373,66 @@ public class AppService {
 		}
 	}
 
-	public String followingList(String username, HttpSession session, ModelMap map) {
+	public String followingList(HttpSession session, ModelMap map) {
 		User user = (User) session.getAttribute("user");
 		if (user != null && user.isInorout()) {
-			List<User> followingList = repository.findByFollowing(user);
-			if (followingList.isEmpty()) {
-				session.setAttribute("fail", "Following No one");
+			List<User> following = user.getFollowing();
+			if (following.isEmpty()) {
+				session.setAttribute("fail", "Not following anyone");
 				return "redirect:/profile/" + user.getUsername();
 			} else {
-				map.put("followings", followingList);
+				map.put("followings", following);
+				return "following.html";
+			}
+
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+	}
+
+	public String followersList(HttpSession session, ModelMap map) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			List<User> followers = user.getFollowers();
+			if (followers.isEmpty()) {
+				session.setAttribute("fail", "No followers");
+				return "redirect:/profile/" + user.getUsername();
+			} else {
+				map.put("followers", followers);
 				return "followers.html";
 			}
+
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+	}
+
+	public String unFollow(int id, HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			User unFollowUser = null;
+			for (User unFollow : user.getFollowing()) {
+				if (id == unFollow.getId()) {
+					unFollowUser = unFollow;
+					break;
+				}
+			}
+			user.getFollowing().remove(unFollowUser);
+			repository.save(user);
+
+			User unUser = null;
+			for (User unUserFollow : unFollowUser.getFollowers()) {
+				if (user.getId() == unUserFollow.getId()) {
+					unUser = unUserFollow;
+					break;
+				}
+			}
+			unFollowUser.getFollowers().remove(unUser);
+			repository.save(unFollowUser);
+			session.setAttribute("user", repository.findById(user.getId()).get());
+			return "redirect:/profile/" + user.getUsername();
 		} else {
 			session.setAttribute("fail", "Invalid Session");
 			return "redirect:/login";

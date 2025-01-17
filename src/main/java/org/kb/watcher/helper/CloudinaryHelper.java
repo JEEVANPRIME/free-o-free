@@ -24,19 +24,9 @@ public class CloudinaryHelper {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return (String) map.get("url");
+		return (String) map.get("url"); 
 	}
 
-//	public String saveUploadImage(MultipartFile file) {
-//		Cloudinary cloudinary = new Cloudinary(url);
-//		Map map = null;
-//		try {
-//			map = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder", "postupload"));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return (String) map.get("url");
-//	}
 	public String saveUploadImage(MultipartFile file) {
 		Cloudinary cloudinary = new Cloudinary(url);
 		Map map = null;
@@ -44,14 +34,9 @@ public class CloudinaryHelper {
 			map = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder", "postupload"));
 		} catch (IOException e) {
 			e.printStackTrace();
-//			throw new RuntimeException("File upload failed", e);
 		}
-
-		if (map == null || !map.containsKey("url")) {
-			throw new RuntimeException("Failed to retrieve the upload URL from Cloudinary");
-		}
-
 		return (String) map.get("url");
 	}
+
 
 }

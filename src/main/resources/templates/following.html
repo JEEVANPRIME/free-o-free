@@ -115,20 +115,20 @@
         </div>
     </header>
     <div class="suggestion-container">
-        <div th:each="follower:${followers}" class="suggestion-card">
+        <div th:each="following:${followings}" class="suggestion-card">
             <div class="profile-image">
-                <img th:if="${follower.imageurl==null}"
+                <img th:if="${following.imageurl==null}"
                     src="https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png"
                     alt="Profile Picture" class="profile-picture">
-                <img th:if="${follower.imageurl}" th:src="${follower.imageurl}" alt="Profile Picture"
+                <img th:if="${following.imageurl}" th:src="${following.imageurl}" alt="Profile Picture"
                     class="profile-picture">
             </div>
             <div class="user-info">
-                <span class="username" th:text="${follower.username}"></span>
+                <span class="username" th:text="${following.username}"></span>
                 <div class="action-buttons">
                     <button class="button view-btn">View Profile</button>
-                    <a th:if="${!follower.isFollowing()}" th:href="'/follow/'+${follower.id}"><button class="button follow-btn">Follow</button></a>
-                    <a th:if="${follower.isFollowing()}" th:href="'/unfollow/'+${follower.id}"><button class="button follow-btn">Un-Follow</button></a>
+                    <a th:if="${!following.isFollowing()}" th:href="'/follow/'+${following.id}"><button class="button follow-btn">Follow</button></a>
+                    <a th:if="${following.isFollowing()}" th:href="'/unfollow/'+${following.id}"><button class="button follow-btn">Un-Follow</button></a>
                 </div>
             </div>
         </div>

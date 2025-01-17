@@ -131,10 +131,10 @@
 
 <body>
     <div class="upload-form">
-        <div th:if="${posts}">
+        <div th:if="${post}">
             <h1>Current Post</h1>
             <div class="posts-grid">
-                <div th:each="post:${posts}" class="post-item">
+                <div class="post-item">
                     <img th:src="${post.fileurl}">
                     <p th:text="${post.caption}"></p>
                 </div>
@@ -143,12 +143,13 @@
         <h2>Create New Post</h2>
         <form action="/edit-post" method="POST" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="file">Choose Image/Video:</label>
+                <input type="hidden" name="id" th:value="${post.id}" >
+                <label for="file">Choose Image: (Or leave blank for current image)</label>
                 <input type="file" id="file" name="file" class="custom-file-input">
             </div>
             <div class="form-group">
                 <label for="caption">Caption:</label>
-                <textarea id="caption" name="caption" placeholder="Write a caption..." required></textarea>
+                <textarea id="caption" name="caption" th:value="${post.caption}" placeholder="Write a caption..."></textarea>
             </div>
             <button type="submit" class="upload-btn">Upload Post</button>
         </form>

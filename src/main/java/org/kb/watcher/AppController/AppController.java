@@ -1,5 +1,7 @@
 package org.kb.watcher.AppController;
 
+import java.io.IOException;
+
 import org.kb.watcher.dto.Post;
 import org.kb.watcher.dto.User;
 import org.kb.watcher.service.AppService;
@@ -96,14 +98,14 @@ public class AppController {
 		return service.editPost(id, session, map);
 	}
 
+	@PostMapping("/edit-post")
+	public String editPost(Post post, HttpSession session) {
+		return service.updatePost(post, session);
+	}
+
 	@GetMapping("/delete-post/{id}")
 	public String deletePost(HttpSession session, @PathVariable int id) {
 		return service.deletePost(session, id);
-	}
-
-	@PostMapping("/edit-post")
-	public String editPost(Post post, @RequestParam MultipartFile file, HttpSession session) {
-		return service.editPost(post, file, session);
 	}
 
 	@GetMapping("/suggestions")
@@ -114,6 +116,11 @@ public class AppController {
 	@GetMapping("/follow/{id}")
 	public String followers(@PathVariable int id, HttpSession session) {
 		return service.followers(id, session);
+	}
+
+	@GetMapping("/unfollow/{id}")
+	public String unFollow(@PathVariable int id, HttpSession session) {
+		return service.unFollow(id, session);
 	}
 
 	@GetMapping("/forgot-password")
@@ -132,8 +139,13 @@ public class AppController {
 	}
 
 	@GetMapping("/following/{username}")
-	public String followingList(@PathVariable String username, HttpSession session, ModelMap map) {
-		return service.followingList(username, session, map);
+	public String followingList(HttpSession session, ModelMap map) {
+		return service.followingList(session, map);
+	}
+
+	@GetMapping("/followers/{username}")
+	public String followersList(HttpSession session, ModelMap map) {
+		return service.followersList(session, map);
 	}
 
 	@GetMapping("/logout")
