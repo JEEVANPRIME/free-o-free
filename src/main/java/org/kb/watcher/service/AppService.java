@@ -146,9 +146,13 @@ public class AppService {
 		}
 	}
 
-	public String homeLoad(HttpSession session) {
+	public String homeLoad(HttpSession session, ModelMap map) {
 		User user = (User) session.getAttribute("user");
 		if (user != null && user.isInorout()) {
+			List<User> users = user.getFollowing();
+			List<Post> posts = postRepository.findByUserIn(users);
+			if (!posts.isEmpty())
+				map.put("posts", posts);
 			return "home.html";
 		} else {
 			session.setAttribute("fail", "Invalid Session");
@@ -266,7 +270,7 @@ public class AppService {
 			post.setUser(user);
 			postRepository.save(post);
 			session.setAttribute("pass", "Updated Success");
-			return "redirect:/profile/" + user.getUsername(); 
+			return "redirect:/profile/" + user.getUsername();
 		} else {
 			session.setAttribute("fail", "Invalid Session");
 			return "redirect:/login";
@@ -433,6 +437,22 @@ public class AppService {
 			repository.save(unFollowUser);
 			session.setAttribute("user", repository.findById(user.getId()).get());
 			return "redirect:/profile/" + user.getUsername();
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+	}
+
+	public String viewProfile(int id, HttpSession session, ModelMap map) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			User checkedUser = repository.findById(id).get();
+			List<Post> posts = postRepository.findByUser(checkedUser);
+			if (!posts.isEmpty())
+				map.put("posts", posts);
+			map.put("user", checkedUser);
+			return "view-profile.html"; 
+
 		} else {
 			session.setAttribute("fail", "Invalid Session");
 			return "redirect:/login";
