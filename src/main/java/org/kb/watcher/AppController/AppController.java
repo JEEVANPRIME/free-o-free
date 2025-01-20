@@ -157,6 +157,11 @@ public class AppController {
 	public String likeUser(@PathVariable int id, HttpSession session) {
 		return service.likeUser(id, session); 
 	}
+	
+	@GetMapping("/dislike/{id}")
+	public String dislikeUser(@PathVariable int id, HttpSession session) {
+		return service.dislikeUser(id, session); 
+	}
 
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
