@@ -150,7 +150,12 @@ public class AppController {
 
 	@GetMapping("/view-profile/{id}")
 	public String viewProfile(@PathVariable int id, HttpSession session, ModelMap map) {
-		return service.viewProfile(id, session, map); 
+		return service.viewProfile(id, session, map);
+	}
+
+	@GetMapping("/like/{id}")
+	public String likeUser(@PathVariable int id, HttpSession session) {
+		return service.likeUser(id, session); 
 	}
 
 	@GetMapping("/logout")

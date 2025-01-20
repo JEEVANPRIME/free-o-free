@@ -17,6 +17,7 @@ public class CloudinaryHelper {
 	String url;
 
 	public String saveImage(MultipartFile file) {
+		System.err.println(url);
 		Cloudinary cloudinary = new Cloudinary(url);
 		Map map = null;
 		try {

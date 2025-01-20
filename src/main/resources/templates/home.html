@@ -191,7 +191,8 @@
                 </div>
                 <img class="post-image" th:src="${post.fileurl}">
                 <div class="post-actions">
-                    <button>Like</button>
+                    <a th:if="${!post.hasLiked(session.user.id)}" th:href="'/like/'+${post.id}"><button>Like</button></a>
+                    <a th:if="${post.hasLiked(session.user.id)}" th:href="'/dislike/'+${post.id}"><button>Dis-Like</button></a>
                     <button>Comment</button>
                 </div>
                 <div class="post-caption">
