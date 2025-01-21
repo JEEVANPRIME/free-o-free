@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .header-buttons button {
+            padding: 8px 16px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .profile-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70vh;
+        }
+
+        .checkmark {
+            width: 100px;
+            height: 100px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .checkmark::after {
+            content: '✓';
+            font-size: 60px;
+            color: white;
+        }
+
+        .status-message {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 300px;
+            margin-top: 20px;
+        }
+
+        .comment-body{
+            font-size: 16px;
+            color: #333;
+        }
+
+        .comment-input{
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .comment-btn{
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="/home"><img src="/images/logo.png" alt="JspGram Logo"></a>
+        </div>
+        <div class="header-buttons">
+            <a th:href="'/profile/'+${session.user.username}"><button class="profile-btn">Profile</button></a>
+            <a href="/logout"><button class="logout-btn">Logout</button></a>
+        </div>
+    </header>
+    <main>
+        <form th:action="'/comment/'+${id}" method="post" class="comment-form">
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label class="comment-body">Comment:</label>
+                <input type="text" name="comment" required class="comment-input">
+            </div>
+            <button class="comment-btn">Post comment</button>
+        </form>
+    </main>
+</body>
+
+</html>

@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.kb.watcher.Repository.PostRepository;
 import org.kb.watcher.Repository.UserRepository;
+import org.kb.watcher.dto.Comment;
 import org.kb.watcher.dto.Post;
 import org.kb.watcher.dto.User;
 import org.kb.watcher.helper.AES;
@@ -493,6 +494,37 @@ public class AppService {
 			}
 			postRepository.save(post);
 			return "redirect:/home";
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+	}
+
+	public String commentPage(int id, HttpSession session, ModelMap map) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			map.put("id", id);
+			return "comment.html";
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+	}
+
+	public String comment(int id, HttpSession session, String comment) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			Post post = postRepository.findById(id).get();
+
+			Comment userComment = new Comment();
+			userComment.setComment(comment);
+			userComment.setUser(user);
+
+			post.getComments().add(userComment);
+			postRepository.save(post);
+
+			return "redirect:/home"; 
+
 		} else {
 			session.setAttribute("fail", "Invalid Session");
 			return "redirect:/login";

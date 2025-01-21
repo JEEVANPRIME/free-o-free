@@ -186,15 +186,67 @@
         <div class="posts-container" th:if="${posts}">
             <div th:each="post:${posts}" class="post-container">
                 <div class="post-header">
-                    <img height="32px" width="32px" th:src="${post.user.imageurl}">
+                    <img th:if="${post.user.imageurl!=null}" height="50px" width="50px" th:src="${post.user.imageurl}">
+                    <img th:if="${post.user.imageurl==null}" height="50px" width="50px" src="https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png" alt="Profile Picture" class="profile-picture">
                     <span th:text="${post.user.username}"></span>
                 </div>
                 <img class="post-image" th:src="${post.fileurl}">
                 <div class="post-actions">
-                    <a th:if="${!post.hasLiked(session.user.id)}" th:href="'/like/'+${post.id}"><button>Like</button></a>
-                    <a th:if="${post.hasLiked(session.user.id)}" th:href="'/dislike/'+${post.id}"><button>Dis-Like</button></a>
-                    <button>Comment</button>
+                    <div class="action-buttons">
+                        <div class="like-section">
+                            <span class="count" th:text="${post.likedUsers.size()}"></span>
+                            <a th:if="${!post.hasLiked(session.user.id)}" th:href="'/like/'+${post.id}"><button>Like</button></a>
+                            <a th:if="${post.hasLiked(session.user.id)}" th:href="'/dislike/'+${post.id}"><button>Dis-Like</button></a>
+                        </div>
+                        <div class="comment-section">
+                            <span class="count" th:text="${post.comments.size()}"></span>
+                            <a th:href="'/comment/'+${post.id}"><button>Comment</button></a>
+                        </div>
+                    </div>
+                    <div class="comments-container">
+                        <div class="comment" th:each="comment:${post.comments}">
+                            <span class="username" th:text="${comment.user.username}"></span>
+                            <span class="comment-text" th:text="${comment.comment}"></span>
+                        </div>
+                    </div>
                 </div>
+                <style>
+                    .post-actions {
+                        padding: 10px 0;
+                    }
+                    .action-buttons {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                    }
+                    .like-section, .comment-section {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                    }
+                    .count {
+                        font-weight: bold;
+                        color: #444;
+                    }
+                    .comments-container {
+                        margin-top: 10px;
+                        padding: 5px 0;
+                    }
+                    .comment {
+                        padding: 5px 10px;
+                        margin: 2px 0;
+                        background-color: #f8f9fa;
+                        border-radius: 4px;
+                    }
+                    .username {
+                        font-weight: bold;
+                        margin-right: 8px;
+                        color: #007bff;
+                    }
+                    .comment-text {
+                        color: #444;
+                    }
+                </style>
                 <div class="post-caption">
                     <span th:text="${post.caption}"></span>
                 </div>

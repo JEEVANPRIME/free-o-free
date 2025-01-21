@@ -155,12 +155,22 @@ public class AppController {
 
 	@GetMapping("/like/{id}")
 	public String likeUser(@PathVariable int id, HttpSession session) {
-		return service.likeUser(id, session); 
+		return service.likeUser(id, session);
 	}
-	
+
 	@GetMapping("/dislike/{id}")
 	public String dislikeUser(@PathVariable int id, HttpSession session) {
-		return service.dislikeUser(id, session); 
+		return service.dislikeUser(id, session);
+	}
+
+	@GetMapping("/comment/{id}")
+	public String commentPage(@PathVariable int id, HttpSession session, ModelMap map) {
+		return service.commentPage(id, session, map);
+	}
+
+	@PostMapping("/comment/{id}")
+	public String comment(@PathVariable int id, HttpSession session,@RequestParam String comment) {
+		return service.comment(id, session,comment);
 	}
 
 	@GetMapping("/logout")
