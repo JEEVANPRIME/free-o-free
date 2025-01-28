@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.razorpay.RazorpayException;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -169,8 +171,18 @@ public class AppController {
 	}
 
 	@PostMapping("/comment/{id}")
-	public String comment(@PathVariable int id, HttpSession session,@RequestParam String comment) {
-		return service.comment(id, session,comment);
+	public String comment(@PathVariable int id, HttpSession session, @RequestParam String comment) {
+		return service.comment(id, session, comment);
+	}
+
+	@GetMapping("/prime")
+	public String prime(HttpSession session, ModelMap map) throws RazorpayException {
+		return service.prime(session, map);
+	}
+
+	@PostMapping("/prime")
+	public String prime(HttpSession session) {
+		return service.prime(session); 
 	}
 
 	@GetMapping("/logout")

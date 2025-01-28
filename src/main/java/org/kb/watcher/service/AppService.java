@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import org.json.JSONObject;
 import org.kb.watcher.Repository.PostRepository;
 import org.kb.watcher.Repository.UserRepository;
 import org.kb.watcher.dto.Comment;
@@ -18,6 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -523,7 +528,45 @@ public class AppService {
 			post.getComments().add(userComment);
 			postRepository.save(post);
 
-			return "redirect:/home"; 
+			return "redirect:/home";
+
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+	}
+
+	public String prime(HttpSession session, ModelMap map) throws RazorpayException {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			RazorpayClient client = new RazorpayClient("rzp_test_tylM7xDywX4O9I", "M81lWibmyIWjbBaxeZ7i6dPu");
+			JSONObject object = new JSONObject();
+			object.put("amount", 19900);
+			object.put("currency", "INR");
+
+			Order order = client.orders.create(object);
+
+			map.put("key", "rzp_test_tylM7xDywX4O9I");
+			map.put("amount", order.get("amount"));
+			map.put("currency", order.get("currency"));
+			map.put("orderId", order.get("id"));
+			map.put("user", user);
+
+			return "payment.html";
+
+		} else {
+			session.setAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+	}
+
+	public String prime(HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		if (user != null && user.isInorout()) {
+			user.setPrime(true);
+			repository.save(user);
+			session.setAttribute("user", user);
+			return "redirect:/profile/" + user.getUsername(); 
 
 		} else {
 			session.setAttribute("fail", "Invalid Session");

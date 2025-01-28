@@ -281,10 +281,11 @@
                 class="profile-picture">
             <div class="profile-info">
                 <h2 th:text="${session.user.username}"></h2>
+                <span th:if="${session.user.prime}" style="color: #1DA1F2;">✔</span>
                 <p th:text="${session.user.email}"></p>
                 <p th:text="${session.user.bio}" class="input-field"></p>
-                <a th:href="'/edit-profile/'+${session.user.username}"><button class="edit-button">Edit
-                        Profile</button></a>
+                <a th:href="'/edit-profile/'+${session.user.username}"><button class="edit-button">Edit Profile</button></a>
+                <a th:if="${!session.user.prime}" href="/prime"> <button class="edit-profile-btn">Become Prime Member</button></a>
             </div>
         </div>
 
